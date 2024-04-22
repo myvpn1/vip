@@ -47,8 +47,6 @@ function vmip(){
             jum2=$(cat /tmp/ipvmess.txt | wc -l)
             rm -rf /etc/kyt/limit/vmess/ip/$user
             send_log
-        else
-            echo ""
         fi
         sleep 0.1
     done
