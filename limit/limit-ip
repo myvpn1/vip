@@ -18,11 +18,9 @@ curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TE
 }
 
 function vmip(){
-#LIMITVMESSIP
-echo -n > /var/log/xray/access.log
-sleep 440
-data=( `ls /etc/kyt/limit/vmess/ip`);
-#Decrypted By YADDY D PHREAKER
+    echo -n > /var/log/xray/access.log
+    sleep 440
+    data=( `ls /etc/kyt/limit/vmess/ip`);
     for user in "${data[@]}"
     do
         iplimit=$(cat /etc/kyt/limit/vmess/ip/$user)
@@ -30,13 +28,26 @@ data=( `ls /etc/kyt/limit/vmess/ip`);
         cekcek=$(echo -e "$ehh" | wc -l);
         if [[ $cekcek -gt $iplimit ]]; then
             exp=$(grep -w "^### $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
-                  sed -i "/^### $user $exp/,/^},{/d" /etc/xray/config.json
-                  sed -i "/^### $user $exp/d" /etc/vmess/.vmess.db
-                  systemctl restart xray >> /dev/null 2>&1
-                  jum2=$(cat /tmp/ipvmess.txt | wc -l)
-                  rm -rf /etc/kyt/limit/vmess/ip/$user
-                  send_log
-                else
+            # Dapatkan waktu saat ini dan waktu kedaluwarsa
+            current_time=$(date +%s)
+            expiry_time=$(date -d "$exp" +%s)
+            # Periksa apakah pengguna telah dihapus selama lebih dari 15 menit
+            time_diff=$(( (current_time - expiry_time) / 60 ))
+            if [[ $time_diff -ge 15 ]]; then
+                # Ambil UUID dari basis data
+                uuid=$(cat /etc/vmess/.vmess.db | grep -w "^$user" | cut -d ' ' -f 2)
+            else
+                # Gunakan UUID yang sama sebelum pengguna dihapus
+                uuid=$(grep -w "^### $user" "/etc/xray/config.json" | cut -d ' ' -f 4)
+            fi
+            # Tambahkan UUID dengan pengguna yang sama
+            sed -i "/^### $user $exp/,/^},{/d" /etc/xray/config.json
+            echo "### $user $exp $uuid" >> /etc/xray/config.json
+            systemctl restart xray >> /dev/null 2>&1
+            jum2=$(cat /tmp/ipvmess.txt | wc -l)
+            rm -rf /etc/kyt/limit/vmess/ip/$user
+            send_log
+        else
             echo ""
         fi
         sleep 0.1
