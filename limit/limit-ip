@@ -34,6 +34,8 @@ data=( `ls /etc/kyt/limit/vmess/ip`);
             systemctl restart xray >> /dev/null 2>&1
             jum2=$(cat /tmp/ipvmess.txt | wc -l)
             send_log
+            # Jadwalkan penghapusan kembali ##
+            (sleep 900; sed -i "s/^## $user $exp/### $user $exp/" /etc/xray/config.json) &
         fi
         sleep 0.1
     done
