@@ -1,4 +1,5 @@
 #!/bin/bash
+domain=(cat /etc/xray/domain)
 
 function send_log(){
     local protocol=$1
@@ -14,6 +15,7 @@ function send_log(){
 <code>────────────────────</code>
 <b>⚠️ NOTIFICATIONS MULTI LOGIN ($protocol) ⚠️</b>
 <code>────────────────────</code>
+<code>Domain  : </code><code>$domain</code>
 <code>Username  : </code><code>$user</code>
 <code>Limit Ip    : </code><code>${iplimit}</code>
 <code>Login Ip    : </code><code>${cekcek}</code>
