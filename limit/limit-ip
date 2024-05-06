@@ -40,8 +40,8 @@ function vmip(){
             sed -i "/### $user /{n;s/^/#/}" /etc/xray/config.json
             at now + 15 minutes <<EOF
             sed -i "/### $user /{n;s/^#//}" /etc/xray/config.json
-EOF
             systemctl restart xray >> /dev/null 2>&1
+EOF
             send_log "vmess" "$user" "$iplimit" "$cekcek"
         else
             echo ""
