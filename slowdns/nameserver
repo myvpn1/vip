@@ -1,12 +1,12 @@
 
 #!/bin/sh
-GIT_CMD="https://github.com/myvpn1/vip/raw/main/"
+REPOS="https://github.com/myvpn1/abc/raw/main/"
 ns_domain_cloudflare() {
 	DOMAIN="klmpk.me"
-	DAOMIN=$(cat /etc/xray/domain)
+	DOMAIN_PATH=$(cat /etc/xray/domain)
 	SUB=$(tr </dev/urandom -dc a-z0-9 | head -c7)
 	SUB_DOMAIN=${SUB}."klmpk.me"
-	NS_DOMAIN=${SUB_DOMAIN}
+	NS_DOMAIN=dns.${SUB_DOMAIN}
 	CF_ID=andyyuda41@gmail.com
         CF_KEY=44ca6e372a82e9ca0d4b1f269302ebabea0f2
 	set -euo pipefail
@@ -32,7 +32,7 @@ ns_domain_cloudflare() {
 			-H "X-Auth-Email: ${CF_ID}" \
 			-H "X-Auth-Key: ${CF_KEY}" \
 			-H "Content-Type: application/json" \
-			--data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DAOMIN}'","proxied":false}' | jq -r .result.id
+			--data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DOMAIN_PATH}'","proxied":false}' | jq -r .result.id
 		)
 	fi
 
@@ -41,7 +41,7 @@ ns_domain_cloudflare() {
 		-H "X-Auth-Email: ${CF_ID}" \
 		-H "X-Auth-Key: ${CF_KEY}" \
 		-H "Content-Type: application/json" \
-		--data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DAOMIN}'","proxied":false}'
+		--data '{"type":"NS","name":"'${NS_DOMAIN}'","content":"'${DOMAIN_PATH}'","proxied":false}'
 	)
 	echo $NS_DOMAIN >/etc/xray/dns
 }
@@ -50,24 +50,17 @@ setup_dnstt() {
 	cd
 	rm -rf *
 	mkdir -p /etc/slowdns
-	wget -O dnstt-server "${GIT_CMD}slowdns/dnstt-server" && chmod +x dnstt-server >/dev/null 2>&1
-	wget -O dnstt-client "${GIT_CMD}slowdns/dnstt-client" && chmod +x dnstt-client >/dev/null 2>&1
+	wget -O dnstt-server "${REPOS}slowdns/dnstt-server" >/dev/null 2>&1
+	chmod +x dnstt-server >/dev/null 2>&1
+	wget -O dnstt-client "${REPOS}slowdns/dnstt-client" >/dev/null 2>&1
+	chmod +x dnstt-client >/dev/null 2>&1
 	./dnstt-server -gen-key -privkey-file server.key -pubkey-file server.pub
 	chmod +x *
 	mv * /etc/slowdns
-	wget -O /etc/systemd/system/client.service "${GIT_CMD}slowdns/client" >/dev/null 2>&1
-	wget -O /etc/systemd/system/server.service "${GIT_CMD}slowdns/server" >/dev/null 2>&1
+	wget -O /etc/systemd/system/client.service "${REPOS}slowdns/client" >/dev/null 2>&1
+	wget -O /etc/systemd/system/server.service "${REPOS}slowdns/server" >/dev/null 2>&1
 	sed -i "s/xxxx/$NS_DOMAIN/g" /etc/systemd/system/client.service 
 	sed -i "s/xxxx/$NS_DOMAIN/g" /etc/systemd/system/server.service 
 }
 ns_domain_cloudflare
 setup_dnstt
-iptables -I INPUT -p udp --dport 5300 -j ACCEPT
-iptables -t nat -I PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 5300
-iptables-save >/etc/iptables/rules.v4 >/dev/null 2>&1
-iptables-save >/etc/iptables.up.rules >/dev/null 2>&1
-netfilter-persistent save >/dev/null 2>&1
-netfilter-persistent reload >/dev/null 2>&1
-systemctl enable iptables >/dev/null 2>&1
-systemctl start iptables >/dev/null 2>&1
-systemctl restart iptables >/dev/null 2>&1
