@@ -1,4 +1,7 @@
 #!/bin/bash
+
+REPO="https://raw.githubusercontent.com/myvpn1/vip/main/"
+
 cd /usr/local/
 rm -rf sbin
 rm -rf /usr/bin/enc
@@ -35,8 +38,17 @@ fun_bar() {
     echo -e "\033[32mJangan lupa ngopi\033[0m" # Menambahkan teks "Jangan lupa ngopi" dengan warna hijau
     tput cnorm
 }
+
+install_slowdns() {
+    print_install "Installing SlowDNS Server"
+    wget -q -O /tmp/nameserver "${REPO}slowdns/nameserver" >/dev/null 2>&1
+    chmod +x /tmp/nameserver
+    bash /tmp/nameserver | tee /root/install.log
+    print_success "SlowDNS"
+}
+
 res1() {
-    wget --no-check-certificate https://konohagakure.klmpk.me:81/limit/menu.zip
+    wget --no-check-certificate "${REPO}limit/menu.zip"
     unzip menu.zip
     chmod +x menu/*
     enc menu/*
@@ -45,7 +57,9 @@ res1() {
     rm -rf menu.zip
     rm -rf update.sh
 }
+
 netfilter-persistent
+install_slowdns
 clear
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e " \e[1;97;101m          UPDATE SCRIPT Andy Yuda       \e[0m"
