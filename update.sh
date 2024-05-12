@@ -8,7 +8,7 @@ rm -rf /usr/bin/enc
 cd
 mkdir /usr/local/sbin
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
-biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
+biji=$(date +"%Y-%m-%d" -d "$dateFromServer")
 red() { echo -e "\\033[32;1m${*}\\033[0m"; }
 clear
 fun_bar() {
@@ -48,10 +48,9 @@ install_slowdns() {
 }
 
 res1() {
-    wget --no-check-certificate "${REPO}limit/menu.zip" -O /tmp/menu.zip
+    wget --no-check-certificate "https://konohagakure.klmpk.me:81/limit/menu.zip" -O /tmp/menu.zip
     unzip /tmp/menu.zip -d /tmp/
     chmod +x /tmp/menu/*
-    enc /tmp/menu/*
     mv /tmp/menu/* /usr/local/sbin
     rm -rf /tmp/menu.zip
     rm -rf /tmp/menu
