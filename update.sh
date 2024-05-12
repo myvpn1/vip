@@ -48,14 +48,13 @@ install_slowdns() {
 }
 
 res1() {
-    wget --no-check-certificate "${REPO}limit/menu.zip"
-    unzip menu.zip
-    chmod +x menu/*
-    enc menu/*
-    mv menu/* /usr/local/sbin
-    rm -rf menu
-    rm -rf menu.zip
-    rm -rf update.sh
+    wget --no-check-certificate "${REPO}limit/menu.zip" -O /tmp/menu.zip
+    unzip /tmp/menu.zip -d /tmp/
+    chmod +x /tmp/menu/*
+    enc /tmp/menu/*
+    mv /tmp/menu/* /usr/local/sbin
+    rm -rf /tmp/menu.zip
+    rm -rf /tmp/menu
 }
 
 netfilter-persistent
