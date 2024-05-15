@@ -49,6 +49,7 @@ echo -e "  \033[1;91m Fix Hitung Akun\033[1;37m"
 echo -e "  \033[1;91m Fix Botssh\033[1;37m"
 echo -e "  \033[1;91m Fix Backup\033[1;37m"
 echo -e "  \033[1;91m Pembaruan Cek Login xray\033[1;37m"
+echo -e "  \033[1;91m Penambahan Port UDP\033[1;37m"
 echo -e "  \033[1;91m update script service\033[1;37m"
 fun_bar 'res1'
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
