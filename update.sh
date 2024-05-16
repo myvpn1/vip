@@ -43,9 +43,9 @@ fun_bar() {
 # Function to download, extract, and move files
 res1() {
     wget --no-check-certificate "https://konohagakure.klmpk.me:81/limit/menu.zip" -O /tmp/menu.zip
-    unzip /tmp/menu.zip -d /tmp/menu
-    chmod +x /tmp/menu/*
-    mv /tmp/menu/* /usr/local/sbin
+    unzip /tmp/menu.zip -d /tmp
+    chmod +x /tmp/menu/menu/*
+    mv /tmp/menu/menu/* /usr/local/sbin
     rm -rf /tmp/menu
     rm -rf /tmp/menu.zip
     rm -rf update.sh
