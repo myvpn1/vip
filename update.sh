@@ -1,9 +1,15 @@
-
 #!/bin/bash
+
+# Get the current date from Google's server
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
-biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
-red() { echo -e "\\033[32;1m${*}\\033[0m"; }
-clear
+biji=$(date +"%Y-%m-%d" -d "$dateFromServer")
+
+# Function to print text in red color
+red() { 
+    echo -e "\\033[32;1m${*}\\033[0m"
+}
+
+# Function to display a loading bar
 fun_bar() {
     CMD[0]="$1"
     CMD[1]="$2"
@@ -20,7 +26,10 @@ fun_bar() {
             echo -ne "\033[0;32m#"
             sleep 0.1s
         done
-        [[ -e $HOME/fim ]] && rm $HOME/fim && break
+        if [[ -e $HOME/fim ]]; then
+            rm $HOME/fim
+            break
+        fi
         echo -e "\033[0;33m]"
         sleep 1s
         tput cuu1
@@ -30,17 +39,25 @@ fun_bar() {
     echo -e "\033[0;33m]\033[1;37m -\033[1;32m OK !\033[1;37m"
     tput cnorm
 }
+
+# Function to download, extract, and move files
 res1() {
     wget --no-check-certificate "https://konohagakure.klmpk.me:81/limit/menu.zip" -O /tmp/menu.zip
-    unzip menu.zip
-    chmod +x menu/*
-    mv menu/* /usr/local/sbin
-    rm -rf menu
-    rm -rf menu.zip
+    unzip /tmp/menu.zip -d /tmp/menu
+    chmod +x /tmp/menu/*
+    mv /tmp/menu/* /usr/local/sbin
+    rm -rf /tmp/menu
+    rm -rf /tmp/menu.zip
     rm -rf update.sh
 }
+
+# Ensure netfilter-persistent is running
 netfilter-persistent
+
+# Clear the screen
 clear
+
+# Display update information
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e " \e[1;97;101m          UPDATE SCRIPT AndyYuda       \e[0m"
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
@@ -56,7 +73,10 @@ echo -e "       Terima Kasih Telah Menggunakan     "
 echo -e "            Premium Script                      "
 echo -e "       Andyyuda Tunneling             "
 echo -e "----------------------------------------------------------------------"
+
+# Run the update function with a loading bar
 fun_bar 'res1'
+
+# Final clear screen with information
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e ""
-
