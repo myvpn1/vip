@@ -18,7 +18,7 @@
 - Tambah Swap 1GiB
 - Pemasangan yang dinamis
 - Tuning profile pada server
-- Xray Core by [@Renzy_Store](https://github.com/askykenza)
+- Xray Core by [@Andyyuda](https://github.com/myvpn1)
 - Penambahan fail2ban
 - Auto block sebagian ads indo by default
 - Auto clear log per 3 menit
@@ -55,7 +55,7 @@
 ### Auther
 ```
 ```
-RidwanKyt :<a href="https://t.me/Renzy_Store" target=”_blank”><img src="https://img.shields.io/static/v1?style=for-the-badge&logo=Telegram&label=Telegram&message=Click%20Here&color=blue"></a><br>
+Andyyuda :<a href="https://t.me/Andyyuda" target=”_blank”><img src="https://img.shields.io/static/v1?style=for-the-badge&logo=Telegram&label=Telegram&message=Click%20Here&color=blue"></a><br>
 ```
 ```
 ``
