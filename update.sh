@@ -1,5 +1,10 @@
 #!/bin/bash
 
+cd /usr/local/
+rm -rf sbin
+rm -rf /usr/bin/enc
+cd
+mkdir /usr/local/sbin
 # Get the current date from Google's server
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 biji=$(date +"%Y-%m-%d" -d "$dateFromServer")
