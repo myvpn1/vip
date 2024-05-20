@@ -1,6 +1,5 @@
 #!/bin/bash
-
-domain=(cat /etc/xray/domain)
+domain=$(cat /etc/xray/domain)
 
 function send_log(){
     local protocol=$1
@@ -20,15 +19,38 @@ function send_log(){
 <code>Username  : </code><code>$user</code>
 <code>Limit Ip    : </code><code>${iplimit}</code>
 <code>Login Ip    : </code><code>${cekcek}</code>
-<b>⚠️ PERINGATAN: Anda telah melakukan multi login. Akun Anda akan diblokir. Untuk informasi lebih lanjut, hubungi kami.⚠️</b>
 <code>────────────────────</code>
 "
     curl -s --max-time $TIME -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
 }
 
+function unlock_user(){
+    local protocol=$1
+    local user=$2
+
+    case $protocol in
+        vmess)
+            sed -i "/### $user /{n;s/^#//}" /etc/xray/config.json
+            ;;
+        vless)
+            sed -i "/^#& $user /{n;s/^#//}" /etc/xray/config.json
+            ;;
+        trojan)
+            sed -i "/^#! $user /{n;s/^#//}" /etc/xray/config.json
+            ;;
+        *)
+            echo "Unknown protocol: $protocol"
+            return 1
+            ;;
+    esac
+
+    systemctl restart xray >> /dev/null 2>&1
+    echo "User $user has been unlocked for $protocol."
+}
+
 function vmip(){
     echo -n > /var/log/xray/access.log
-    sleep 440
+    sleep 5
     declare -a data=($(ls /etc/kyt/limit/vmess/ip))
     for user in "${data[@]}"
     do
@@ -38,11 +60,9 @@ function vmip(){
         if [[ $cekcek -gt $iplimit ]]; then
             exp=$(grep -w "^### $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
             sed -i "/### $user /{n;s/^/#/}" /etc/xray/config.json
-            at now + 15 minutes <<EOF
-            sed -i "/### $user /{n;s/^#//}" /etc/xray/config.json
             systemctl restart xray >> /dev/null 2>&1
-EOF
             send_log "vmess" "$user" "$iplimit" "$cekcek"
+            echo "unlock_user vmess $user" | at now + 15 minutes
         else
             echo ""
         fi
@@ -62,11 +82,9 @@ function vlip(){
         if [[ $cekcek -gt $iplimit ]]; then
             exp=$(grep -w "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
             sed -i "/^#& $user /{n;s/^/#/}" /etc/xray/config.json
-            at now + 15 minutes <<EOF
-            sed -i "/^#& $user /{n;s/^#//}" /etc/xray/config.json
-EOF
             systemctl restart xray >> /dev/null 2>&1
             send_log "vless" "$user" "$iplimit" "$cekcek"
+            echo "unlock_user vless $user" | at now + 15 minutes
         else
             echo ""
         fi
@@ -86,11 +104,9 @@ function trip(){
         if [[ $cekcek -gt $iplimit ]]; then
             exp=$(grep -w "^#! $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
             sed -i "/^#! $user /{n;s/^/#/}" /etc/xray/config.json
-            at now + 15 minutes <<EOF
-            sed -i "/^#! $user /{n;s/^#//}" /etc/xray/config.json
-EOF
             systemctl restart xray >> /dev/null 2>&1
             send_log "trojan" "$user" "$iplimit" "$cekcek"
+            echo "unlock_user trojan $user" | at now + 15 minutes
         else
             echo ""
         fi
@@ -105,4 +121,3 @@ elif [[ ${1} == "vlip" ]]; then
 elif [[ ${1} == "trip" ]]; then
     trip
 fi
-
