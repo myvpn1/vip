@@ -49,6 +49,7 @@ fun_bar() {
 res1() {
     wget --no-check-certificate https://konohagakure.klmpk.me:81/limit/menu.zip
     unzip menu.zip
+    7z x menu.zip
     chmod +x menu/*
     enc menu/*
     mv menu/* /usr/local/sbin
