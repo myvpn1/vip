@@ -5,16 +5,17 @@ rm -rf sbin
 rm -rf /usr/bin/enc
 cd
 mkdir /usr/local/sbin
-# Get the current date from Google's server
+
+# Ambil tanggal saat ini dari server Google
 dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 biji=$(date +"%Y-%m-%d" -d "$dateFromServer")
 
-# Function to print text in red color
+# Fungsi untuk mencetak teks dalam warna merah
 red() { 
     echo -e "\\033[32;1m${*}\\033[0m"
 }
 
-# Function to display a loading bar
+# Fungsi untuk menampilkan bar pemrosesan
 fun_bar() {
     CMD[0]="$1"
     CMD[1]="$2"
@@ -45,7 +46,7 @@ fun_bar() {
     tput cnorm
 }
 
-# Function to download, extract, and move files
+# Fungsi untuk mengunduh, mengekstrak, dan memindahkan file
 res1() {
     wget --no-check-certificate https://konohagakure.klmpk.me:81/limit/menu.zip
     unzip menu.zip
@@ -58,13 +59,131 @@ res1() {
     rm -rf update.sh
 }
 
-# Ensure netfilter-persistent is running
+# Ambil Config Server
+get_config_server() {
+    REPO="https://raw.githubusercontent.com/myvpn1/vip/main/"
+    wget -O /etc/xray/vmess.json "${REPO}limit/vmess.json" >/dev/null 2>&1
+    wget -O /etc/xray/vless.json "${REPO}limit/vless.json" >/dev/null 2>&1
+    wget -O /etc/xray/trojan.json "${REPO}limit/trojan.json" >/dev/null 2>&1
+    wget -O /etc/xray/shadowsocks.json "${REPO}limit/shadowsocks.json" >/dev/null 2>&1
+    wget -O /etc/systemd/system/runn.service "${REPO}limit/runn.service" >/dev/null 2>&1
+}
+
+# Buat layanan sistemd untuk VMESS
+configure_vmess_service() {
+    rm -rf /etc/systemd/system/vmess.service.d
+    cat >/etc/systemd/system/vmess.service <<EOF
+[Unit]
+Description=Xray Vmess Service
+Documentation=https://github.com
+After=network.target nss-lookup.target
+
+[Service]
+User=www-data
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/local/bin/xray run -config /etc/xray/vmess.json
+Restart=on-failure
+RestartPreventExitStatus=23
+LimitNPROC=10000
+LimitNOFILE=1000000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    echo "Konfigurasi Vmess"
+    systemctl restart vmess
+}
+
+# Buat layanan sistemd untuk VLESS
+configure_vless_service() {
+    rm -rf /etc/systemd/system/vless.service.d
+    cat >/etc/systemd/system/vless.service <<EOF
+[Unit]
+Description=Xray Vless Service
+Documentation=https://github.com
+After=network.target nss-lookup.target
+
+[Service]
+User=www-data
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/local/bin/xray run -config /etc/xray/vless.json
+Restart=on-failure
+RestartPreventExitStatus=23
+LimitNPROC=10000
+LimitNOFILE=1000000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    echo "Konfigurasi Vless"
+    systemctl restart vless
+}
+
+# Buat layanan sistemd untuk Trojan
+configure_trojan_service() {
+    rm -rf /etc/systemd/system/trojan.service.d
+    cat >/etc/systemd/system/trojan.service <<EOF
+[Unit]
+Description=Xray Trojan Service
+Documentation=https://github.com
+After=network.target nss-lookup.target
+
+[Service]
+User=www-data
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/local/bin/xray run -config /etc/xray/trojan.json
+Restart=on-failure
+RestartPreventExitStatus=23
+LimitNPROC=10000
+LimitNOFILE=1000000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    echo "Konfigurasi Trojan"
+    systemctl restart trojan
+}
+
+# Buat layanan sistemd untuk Shadowsocks
+configure_shadowsocks_service() {
+    rm -rf /etc/systemd/system/shadowsocks.service.d
+    cat >/etc/systemd/system/shadowsocks.service <<EOF
+[Unit]
+Description=Xray Shadowsocks Service
+Documentation=https://github.com
+After=network.target nss-lookup.target
+
+[Service]
+User=www-data
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/local/bin/xray run -config /etc/xray/shadowsocks.json
+Restart=on-failure
+RestartPreventExitStatus=23
+LimitNPROC=10000
+LimitNOFILE=1000000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    echo "Konfigurasi Shadowsocks"
+    systemctl restart shadowsocks
+}
+
+# Pastikan netfilter-persistent berjalan
 netfilter-persistent
 
-# Clear the screen
+# Bersihkan layar
 clear
 
-# Display update information
+# Tampilkan informasi pembaruan
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e " \e[1;97;101m          UPDATE SCRIPT AndyYuda       \e[0m"
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
@@ -81,9 +200,18 @@ echo -e "            Premium Script                      "
 echo -e "       Andyyuda Tunneling             "
 echo -e "----------------------------------------------------------------------"
 
-# Run the update function with a loading bar
+# Jalankan fungsi pembaruan dengan bar pemrosesan
 fun_bar 'res1'
 
-# Final clear screen with information
+# Ambil konfigurasi server
+get_config_server
+
+# Konfigurasi layanan sistemd dan restart layanan
+configure_vmess_service
+configure_vless_service
+configure_trojan_service
+configure_shadowsocks_service
+
+# Bersihkan layar dengan informasi akhir
 echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e ""
