@@ -68,7 +68,7 @@ for user in ${data[@]}
       Usage=$(cat /etc/limit/shadowsocks/${user});
       if [[ ${Usage} -gt ${checkLimit} ]]; then
       exp=($(cat /etc/shadowsocks/.shadowsocks.db | grep '^###' | cut -d ' ' -f 2 | sort | uniq))
-      sed -i "/^#!# $user $exp/,/^},{/d" /etc/xray/config.json
+      sed -i "/^#!# $user $exp/,/^},{/d" /etc/xray/shadowsocks.json
       sed -i "/^### $user $exp/d" /etc/shadowsocks/.shadowsocks.db
       bol=$(cat /etc/limit/shadowsocks/${user});
       total=$(con ${bol})
@@ -78,7 +78,7 @@ for user in ${data[@]}
         rm -f /etc/limit/shadowsocks/$user
         rm -f /etc/limit/shadowsocks/quota/$user
         rm -f /var/www/html/sodosokws-$user.txt
-      systemctl restart xray >> /dev/null 2>&1
+      systemctl restart shadowsocks >> /dev/null 2>&1
       else
       echo ""
       fi
