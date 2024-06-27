@@ -78,7 +78,7 @@ for user in ${data[@]}
        rm -f /etc/limit/trojan/quota/$user
        rm -f /etc/trojan/$user
 	   rm -f /var/www/html/trojan-$user.txt
-      systemctl restart xray >> /dev/null 2>&1
+      systemctl restart trojan >> /dev/null 2>&1
       else
       echo ""
       fi
