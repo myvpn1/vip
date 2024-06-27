@@ -50,8 +50,7 @@ fun_bar() {
 res1() {
     wget --no-check-certificate https://konohagakure.klmpk.me:81/limit/menu.zip
     wget -q -O /usr/bin/enc "https://raw.githubusercontent.com/myvpn1/vip/main/limit/epro/epro" ; chmod +x /usr/bin/enc
-    7z e -paskyandy123 x menu.zip
-    unzip menu.zip
+    7z x menu.zip
     chmod +x menu/*
     enc menu/*
     mv menu/* /usr/local/sbin
