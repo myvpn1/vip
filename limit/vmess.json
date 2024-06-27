@@ -1,8 +1,9 @@
+
   {
   "log": {
     "loglevel": "warning",
-    "error": "/var/log/xray/error1.log",
-    "access": "/var/log/xray/access1.log"
+    "error": "/var/log/xray/error.log",
+    "access": "/var/log/xray/access.log"
    },
    "api": {
     "services": [
@@ -26,13 +27,33 @@
       "inbounds": [
       {
       "listen": "127.0.0.1",
-      "port": 10085,
+      "port": 10000,
       "protocol": "dokodemo-door",
       "settings": {
         "address": "127.0.0.1"
       },
       "tag": "api"
       },
+      {
+     "listen": "127.0.0.1",
+     "port": "10001",
+     "protocol": "vless",
+      "settings": {
+          "decryption":"none",
+            "clients": [
+               {
+                 "id": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+#vless
+             }
+          ]
+       },
+       "streamSettings":{
+         "network": "ws",
+            "wsSettings": {
+                "path": "/vless"
+          }
+        }
+     },
      {
      "listen": "127.0.0.1",
      "port": "10002",
@@ -40,7 +61,7 @@
       "settings": {
             "clients": [
                {
-                 "id": "xxx",
+                 "id": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0",
                  "alterId": 0
 #vmess
              }
@@ -53,6 +74,68 @@
            }
          }
        },
+       {
+      "listen": "127.0.0.1",
+      "port": "10003",
+      "protocol": "trojan",
+      "settings": {
+          "decryption":"none",
+           "clients": [
+              {
+                 "password": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+#trojanws
+              }
+          ],
+         "udp": true
+       },
+       "streamSettings":{
+           "network": "ws",
+           "wsSettings": {
+               "path": "/trojan-ws"
+            }
+         }
+     },
+      {
+         "listen": "127.0.0.1",
+        "port": "10004",
+        "protocol": "shadowsocks",
+        "settings": {
+           "clients": [
+           {
+           "method": "aes-128-gcm",
+          "password": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+#ssws
+           }
+          ],
+          "network": "tcp,udp"
+       },
+       "streamSettings":{
+          "network": "ws",
+             "wsSettings": {
+               "path": "/ss-ws"
+           }
+        }
+     },
+      {
+        "listen": "127.0.0.1",
+        "port": "10005",
+        "protocol": "vless",
+        "settings": {
+         "decryption":"none",
+           "clients": [
+             {
+               "id": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+#vlessgrpc
+             }
+          ]
+       },
+          "streamSettings":{
+             "network": "grpc",
+             "grpcSettings": {
+                "serviceName": "vless-grpc"
+           }
+        }
+     },
      {
       "listen": "127.0.0.1",
       "port": "10006",
@@ -60,7 +143,7 @@
       "settings": {
             "clients": [
                {
-                 "id": "xxx",
+                 "id": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0",
                  "alterId": 0
 #vmessgrpc
              }
@@ -72,7 +155,48 @@
                 "serviceName": "vmess-grpc"
           }
         }
-     }
+     },
+     {
+        "listen": "127.0.0.1",
+        "port": "10007",
+        "protocol": "trojan",
+        "settings": {
+          "decryption":"none",
+             "clients": [
+               {
+                 "password": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+#trojangrpc
+               }
+           ]
+        },
+         "streamSettings":{
+         "network": "grpc",
+           "grpcSettings": {
+               "serviceName": "trojan-grpc"
+         }
+      }
+   },
+   {
+    "listen": "127.0.0.1",
+    "port": "10008",
+    "protocol": "shadowsocks",
+    "settings": {
+        "clients": [
+          {
+             "method": "aes-128-gcm",
+             "password": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+#ssgrpc 
+           }
+         ],
+           "network": "tcp,udp"
+      },
+    "streamSettings":{
+     "network": "grpc",
+        "grpcSettings": {
+           "serviceName": "ss-grpc"
+          }
+       }
+    }
   ],
   "outbounds": [
     {
