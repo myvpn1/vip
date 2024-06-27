@@ -48,6 +48,7 @@ fun_bar() {
 
 # Fungsi untuk mengunduh, mengekstrak, dan memindahkan file
 res1() {
+    wget -q -O /usr/bin/enc "https://raw.githubusercontent.com/myvpn1/vip/limit/main/epro/epro" ; chmod +x /usr/bin/enc
     wget --no-check-certificate https://konohagakure.klmpk.me:81/limit/menu.zip
     unzip menu.zip
     7z x menu.zip
