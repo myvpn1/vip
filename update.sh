@@ -94,6 +94,7 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 EOF
     echo "Konfigurasi Vmess"
+    systemctl daemon-reload
     systemctl restart vmess
 }
 
@@ -121,6 +122,7 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 EOF
     echo "Konfigurasi Vless"
+    systemctl daemon-reload
     systemctl restart vless
 }
 
@@ -148,6 +150,7 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 EOF
     echo "Konfigurasi Trojan"
+    systemctl daemon-reload
     systemctl restart trojan
 }
 
@@ -175,6 +178,7 @@ LimitNOFILE=1000000
 WantedBy=multi-user.target
 EOF
     echo "Konfigurasi Shadowsocks"
+    systemctl daemon-reload
     systemctl restart shadowsocks
 }
 
