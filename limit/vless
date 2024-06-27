@@ -33,7 +33,7 @@ function con() {
 
   while true; do
   sleep 5
-  data=($(cat /etc/xray/config.json | grep '^#&' | cut -d ' ' -f 2 | sort | uniq))
+  data=($(cat /etc/xray/vless.json | grep '^#&' | cut -d ' ' -f 2 | sort | uniq))
   if [[ ! -e /etc/limit/vless ]]; then
   mkdir -p /etc/limit/vless
   fi
@@ -72,8 +72,8 @@ for user in ${data[@]}
       if [[ ${Usage} -gt ${checkLimit} ]]; then
       total=$(con ${Usage})
       total2=$(con ${checkLimit})
-      exp=$(grep -w "^#& $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
-      sed -i "/^#& $user $exp/,/^},{/d" /etc/xray/config.json
+      exp=$(grep -w "^#& $user" "/etc/xray/vless.json" | cut -d ' ' -f 3 | sort | uniq)
+      sed -i "/^#& $user $exp/,/^},{/d" /etc/xray/vless.json
       sed -i "/^#& $user $exp/d" /etc/vless/.vless.db
       send-log
       rm -f /etc/funny/limit/vless/ip/$user
