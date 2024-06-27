@@ -81,7 +81,7 @@ for user in ${data[@]}
 	  rm -f /etc/limit/vless/$user
 	  rm -f /etc/limit/vless/quota/$user
 	  rm -f /var/www/html/vless-$user.txt
-      systemctl restart xray >> /dev/null 2>&1
+      systemctl restart vless >> /dev/null 2>&1
       else
       echo ""
       fi
