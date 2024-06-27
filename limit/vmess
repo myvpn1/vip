@@ -71,8 +71,8 @@ for user in ${data[@]}
       total=$(con ${Usage})
       total2=$(con ${checkLimit})
       if [[ ${Usage} -gt ${checkLimit} ]]; then
-      exp=$(grep -w "^### $user" "/etc/xray/config.json" | cut -d ' ' -f 3 | sort | uniq)
-      sed -i "/^### $user $exp/,/^},{/d" /etc/xray/config.json
+      exp=$(grep -w "^### $user" "/etc/xray/vmess.json" | cut -d ' ' -f 3 | sort | uniq)
+      sed -i "/^### $user $exp/,/^},{/d" /etc/xray/vmess.json
       sed -i "/^### $user $exp/d" /etc/vmess/.vmess.db
       send-log
       rm -rf /etc/limit/vmess/${user}
